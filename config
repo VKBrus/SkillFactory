@@ -1,0 +1,16 @@
+[user]
+	name = VKBrus
+	email = vk.brusencov@yandex.ru
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[init]
+	defaultBranch = master
+[core]
+	quotepath = off
+[alias]
+  history = log --graph
+  hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+
