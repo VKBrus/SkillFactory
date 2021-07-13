@@ -1,0 +1,22 @@
+{
+  "name": "node_npm",
+  "version": "1.0.0",
+  "description": "Test_node_npm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VKBrus/SkillFactory.git"
+  },
+  "author": "VKBrus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VKBrus/SkillFactory/issues"
+  },
+  "homepage": "https://github.com/VKBrus/SkillFactory#readme",
+  "dependencies": {
+    "jquery": "^3.6.0"
+  }
+}
