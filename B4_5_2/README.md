@@ -1,15 +1,14 @@
-#Создать образ docker
+#Создать образ docker: 
 docker build -t vkbrus_apache .
 
-#Запустить image
+#Запустить image: 
 docker run -p 80:80 vkbrus_apache
 
-#Перейти в браузер
+#Перейти в браузер: 
 http://localhost:80
 
 
-#После экспериментов можно "прибраться" от мусора
+#После экспериментов можно "прибраться" от мусора: 
 docker stop $(docker ps -a -q)
+
 docker rm $(docker ps -a -q)
-
-
