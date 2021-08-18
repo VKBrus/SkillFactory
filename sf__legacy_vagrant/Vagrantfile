@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_check_update = false
+  config.vm.define  "BobPostgres"
+  config.vm.hostname = "BobPostgres"
+  config.vm.provider "virtualbox" do |vb|
+     vb.gui = false
+     vb.memory = "2048"
+     vb.cpus = 2
+     vb.name = "BobPostgres"
+  end
+  
+  config.vm.provision "shell", inline: <<-SHELL
+  # Ставим кое-что из необходимого
+    export DEBIAN_FRONTEND=noninteractive
+    sudo apt-get install -y locales htop curl ca-certificates gnupg unzip
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    sudo apt-get update
+    sudo apt-get install -y libc6
+    sudo apt-get install postgresql-8.4 postgresql-contrib-8.4 -y 
+#    sudo -i -u postgres
+#    psql
+#    \c
+#    \q
+  SHELL
+end
