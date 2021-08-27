@@ -34,7 +34,7 @@ resource "yandex_compute_instance" "vm-1" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    user-data = "${file("meta.txt")}"
   }
 }
 
