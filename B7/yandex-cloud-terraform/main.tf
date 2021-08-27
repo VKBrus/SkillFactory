@@ -19,12 +19,14 @@ resource "yandex_compute_instance" "vm-1" {
 
   resources {
     cores  = 2
-    memory = 2
+    memory = 3
+    core_fraction = 5
   }
 
   boot_disk {
     initialize_params {
       image_id = "fd83klic6c8gfgi40urb"
+      size     = 10
     }
   }
 
@@ -44,11 +46,13 @@ resource "yandex_compute_instance" "vm-2" {
   resources {
     cores  = 4
     memory = 4
+    core_fraction = 5
   }
 
   boot_disk {
     initialize_params {
       image_id = "fd83klic6c8gfgi40urb"
+      size     = 10
     }
   }
 
