@@ -1,6 +1,6 @@
 variable "token" {
   type    = string
-  default = "*******************"
+  default = "AQAAAAAiOJ0rAATuwRC_RJng_kWXjPcStsjBpvg"
 }
 
 variable "cloud_id" {
