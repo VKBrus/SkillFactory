@@ -1,0 +1,46 @@
+#-------------------------------------------------------------
+# Simpliest Manifest File to create Pod with one Container
+#
+# Copyleft (c) by Denis Astahov 2020
+#-------------------------------------------------------------
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: nginx-web
+  labels:
+    env  : b7p
+    app  : main
+    tier : layer1
+    owner: VladimirBrusentsov
+spec:
+  selector:
+    matchLabels:
+      project: bob-nginx
+  template:
+    metadata:
+      labels:
+        project: bob-nginx
+    spec:
+      containers:
+        - name : container-web
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-pod-service
+  labels:
+    env  : b7p
+    owner: VladimirBrusentsov
+spec:
+  selector:
+    project: bob-nginx    # Selecting PODS with those Labels
+  ports:
+    - name      : app-listener
+      protocol  : TCP
+      port      : 8888  # Port on Load Balancer
+      targetPort: 80  # Port on POD
+  type: LoadBalancer
