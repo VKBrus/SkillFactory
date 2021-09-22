@@ -26,4 +26,6 @@ https://habr.com/ru/post/541118/
 =======
 
 	
+https://github.com/kelseyhightower/kubernetes-the-hard-way
 
+https://netapp-trident.readthedocs.io/en/stable-v18.07/reference/simple-kubernetes.html
