@@ -6,8 +6,6 @@ https://infoit.com.ua/linux/kak-ustanovit-kubernetes-na-ubuntu-20-04-lts/
 
 https://github.com/justmeandopensource/kubernetes/blob/master/docs/install-cluster-ubuntu-20.md
 
-
-
 https://www.youtube.com/watch?v=UP7OzZBNIrA
 
 https://www.learnitguide.net/2020/10/install-kubernetes-dashboard-deploy.html
@@ -23,12 +21,8 @@ https://github.com/justmeandopensource/kubernetes/blob/master/docs/install-clust
 
 https://habr.com/ru/post/541118/
 
-
 =======
-export KUBERNETES_MASTER=https://10.244.0.10:6443
 
-
-	
 https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 https://netapp-trident.readthedocs.io/en/stable-v18.07/reference/simple-kubernetes.html

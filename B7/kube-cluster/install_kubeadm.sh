@@ -96,7 +96,15 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versio
 # Выполнять на worker-нодах !!!
 sudo kubeadm join 10.244.0.10:6443 --token npt6gi.1tzxuf0c316osdkv --discovery-token-ca-cert-hash sha256:6a270917e8b2cf0f0831e6ece414c88d7ab19fe55e207211d857f7cc930788db --ignore-preflight-errors=all
 
+export KUBERNETES_MASTER=https://10.244.0.10:6443
+
 #Проверка
+kubectl get all -o wide
+
+kubectl get nodes -o wide
+
+kubectl get pods -o wide
+
 kubectl get po -A
 
 kubectl get events -A
