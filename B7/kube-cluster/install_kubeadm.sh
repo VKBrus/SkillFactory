@@ -23,6 +23,8 @@ sudo echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] ht
 
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
+
 sudo apt-get update
 
 sudo apt-get install -y kubelet kubeadm kubectl
@@ -124,3 +126,30 @@ kubectl get events -A
 #kubectl get events | grep bad
 #kubectl describe node b
 kubectl describe po --all-namespaces
+
+#----------
+
+При настройке кластера с помощью «kubeadm init» следует помнить несколько моментов, и это четко задокументировано на сайте Kubernetes kubeadm cluster create : 
+https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
+
+"kubeadm reset", если вы уже создали предыдущий кластер
+Удалите папку ".kube" из домашнего или корневого каталога.
+(Также остановка kubelet с помощью systemctl обеспечит плавную настройку)
+Отключите свопинг на машине навсегда, особенно если вы перезагружаете свою Linux-систему.
+И не забывайте, установите надстройку сети pod в соответствии с инструкциями, приведенными в добавлении на сайте (не на сайте Kubernetes).
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network
+
+Следуйте инструкциям по инициализации, указанным в командном окне kubeadm.
+Если все эти шаги выполнены правильно, ваш кластер будет работать правильно.
+
+И не забудьте выполнить следующую команду, чтобы включить планирование в созданном кластере:
+
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+О том, как установить из-за прокси, вы можете найти это полезным:
+https://stackoverflow.com/questions/45580788/how-to-install-kubernetes-cluster-behind-proxy-with-kubeadm
+
+
+curl https://docs.projectcalico.org/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+
