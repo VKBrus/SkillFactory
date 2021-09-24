@@ -26,3 +26,14 @@ https://habr.com/ru/post/541118/
 https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 https://netapp-trident.readthedocs.io/en/stable-v18.07/reference/simple-kubernetes.html
+
+========
+
+https://stackoverflow.com/questions/49112336/container-runtime-network-not-ready-cni-config-uninitialized
+
+https://stackoverflow.com/questions/36880680/how-to-reset-my-kubectl-settings-back-to-default
+
+https://infoit.com.ua/linux/shpargalka-po-kubectl-dlya-administratorov-kubernetes-i-podgotovka-k-ekzamenu-cka-2/
+
+
+

@@ -1,3 +1,7 @@
+sudo locale-gen ru_RU.UTF-8
+sudo update-locale LANG=ru_RU.UTF-8 LC_TIME="ru_RU.UTF-8"
+sudo timedatectl set-timezone Europe/Samara
+
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 br_netfilter
 EOF
@@ -96,7 +100,7 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versio
 # Выполнять на worker-нодах !!!
 sudo kubeadm join 10.244.0.10:6443 --token npt6gi.1tzxuf0c316osdkv --discovery-token-ca-cert-hash sha256:6a270917e8b2cf0f0831e6ece414c88d7ab19fe55e207211d857f7cc930788db --ignore-preflight-errors=all
 
-export KUBERNETES_MASTER=https://10.244.0.10:6443
+export KUBERNETES_MASTER=https://10.244.0.10:6443   #Надо ли вообще?
 
 #Проверка
 kubectl get all -o wide
@@ -109,3 +113,14 @@ kubectl get po -A
 
 kubectl get events -A
 
+#kubectl describe node/pod <node/pod-name>
+#kubectl logs <node/pod-name>
+#kubectl <pod-name> -c <container-name>
+#kubectl exec -it <>
+
+#sudo journalctl -u kubelet | tail
+#sudo journalctl -u kubelet -xn | less
+#sudo kubectl get events | grep bad
+#kubectl get events | grep bad
+#kubectl describe node b
+kubectl describe po --all-namespaces
