@@ -96,7 +96,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 #На master
 sudo kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=172.17.0.1 
 
-# 172.17.0.1 - откуда взялся?
+# 172.17.0.1 - откуда взялся? он показывается по команде ifconfig...
 ## --- или 130.193.58.32 (внешний) или 10.244.0.3 (внутренний) ???
 
 mkdir -p $HOME/.kube
@@ -118,7 +118,7 @@ sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl v
 # --- На worker
 sudo kubeadm join 172.17.0.1:6443 --token 6mid0v.br7zdb08jrvjzkmc --discovery-token-ca-cert-hash sha256:f270599d60449d08a0ba3701906a0e0b4af88cbc91dca6405369e37587166c52 
 
-# 172.17.0.1 - откуда взялся?
+# 172.17.0.1 - откуда взялся? он показывается по команде ifconfig...
 ## --- или 130.193.58.32 (внешний) или 10.244.0.3 (внутренний) ???
 ===
 
@@ -200,3 +200,43 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 О том, как установить из-за прокси, вы можете найти это полезным:
 https://stackoverflow.com/questions/45580788/how-to-install-kubernetes-cluster-behind-proxy-with-kubeadm
 
+
+------
+Рекомендации от ментора 29.09.2021
+
+
+Vladislav Markov  16:04
+посмотрел бегло - пока не трогайте ничего - ещё гляну. Не вижу пакета acl - я установил
+кластер готов
+
+vladimir@master:~$ kubectl get nodes
+NAME      STATUS   ROLES                  AGE   VERSION
+master    Ready    control-plane,master   15m   v1.22.2
+worker1   Ready    <none>                 68s   v1.22.2
+worker2   Ready    <none>                 32s   v1.22.2
+
+
+user: vladimir
+pass: vladimir_sf
+
+Не могу сказать в чем была проблема, вы просто пропустили какой-то шаг видимо. Я все сделал по инструкции что завалялась у меня в виду готового ansible сценария. Сделал руками быстро. Ничего не шаманил.
+
+Не стоял только пакет acl
+
+В остальном - докер везде стоит - это норм
+
+репо кубера прописана - это тоже норм
+
+kubelet, kubeadm, kubectl - опять же были вами уже установлены - что тоже норм :легкая_улыбка:
+
+те все водные были верны кроме пакета acl
+
+А далее просто пару команд:
+kubeadm init --pod-network-cidr=10.244.0.0/16 > cluster_initialized.txt под рутом
+копируете конфиг из /etc/kubernetes/admin.conf в /home/vladimir/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
+kubeadm token create --print-join-command     -  под рутом
+на нодах выполняете join - команду из п.4
+
+И все...
+Обычно все это оборачивают в shell скрипт или Ansible, ваши однокурсники
