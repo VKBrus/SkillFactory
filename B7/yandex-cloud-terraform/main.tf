@@ -15,7 +15,7 @@ provider "yandex" {
 }
 
 resource "yandex_compute_instance" "vm-1" {
-  name = "terraform1"
+  name = "master"
 
   resources {
     cores         = 4
@@ -41,7 +41,7 @@ resource "yandex_compute_instance" "vm-1" {
 }
 
 resource "yandex_compute_instance" "vm-2" {
-  name = "terraform2"
+  name = "worker1"
 
   resources {
     cores         = 4
@@ -67,7 +67,7 @@ resource "yandex_compute_instance" "vm-2" {
 }
 
 resource "yandex_compute_instance" "vm-3" {
-  name = "terraform3"
+  name = "worker2"
 
   resources {
     cores         = 4
@@ -93,7 +93,7 @@ resource "yandex_compute_instance" "vm-3" {
 }
 
 resource "yandex_vpc_network" "network-1" {
-  name = "network1"
+  name = "network-1"
 }
 
 resource "yandex_vpc_subnet" "subnet-1" {

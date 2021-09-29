@@ -33,6 +33,8 @@ EOF
 
 sudo sysctl --system
 
+#sudo useradd vladimir -p vladimir_sf
+
 #--- Установка Docker
 sudo apt-get update
 
@@ -51,6 +53,7 @@ sudo docker run hello-world
 
 sudo groupadd docker
 sudo usermod -aG docker $USER
+#sudo usermod -aG docker vladimir
 newgrp docker 
 
 docker run hello-world
@@ -59,6 +62,7 @@ sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
 #sudo mkdir /etc/docker
+ll /etc/docker
 
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
@@ -100,6 +104,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 #На master
 #sudo kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=172.17.0.1 
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 > cluster_initialized.txt --ignore-preflight-errors=...
+cat cluster_initialized.txt
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -108,7 +113,8 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 #Alternatively, if you are the root user, you can run:
 #export KUBECONFIG=/etc/kubernetes/admin.conf
 
-sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
+cat pod_network_setup.txt
 
 #You should now deploy a pod network to the cluster.
 #Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
@@ -122,8 +128,8 @@ sudo kubeadm token create --print-join-command
 
 #Then you can join any number of worker nodes by running the following on each as root:
 # --- На worker
-#sudo kubeadm join 172.17.0.1:6443 --token 6mid0v.br7zdb08jrvjzkmc --discovery-token-ca-cert-hash sha256:f270599d60449d08a0ba3701906a0e0b4af88cbc91dca6405369e37587166c
-sudo kubeadm join 10.244.0.3:6443 --token uhk38r.yjf68xhje9ky101z --discovery-token-ca-cert-hash sha256:459c25819a4cd0d95f6c069f094978baf5cf5e780880ad3f2ee8824793120606
+sudo kubeadm join 10.244.0.32:6443 --token 7zi2vu.t3cn7nbevh6u3rok --discovery-token-ca-cert-hash sha256:3a6592bd5059f95b8c36bd9180202c86bf70e27d1213027fee1c7bdc3e7cf3cc
+#sudo kubeadm join 10.244.0.3:6443 --token uhk38r.yjf68xhje9ky101z --discovery-token-ca-cert-hash sha256:459c25819a4cd0d95f6c069f094978baf5cf5e780880ad3f2ee8824793120606
 =======
 
 #Если же пробовать Flannel
@@ -161,16 +167,16 @@ kubectl get po -A
 
 kubectl get events -A
 
-#kubectl describe node/pod <node/pod-name>
-#kubectl logs <node/pod-name>
-#kubectl <pod-name> -c <container-name>
-#kubectl exec -it <>
+kubectl describe node/pod <node/pod-name>
+kubectl logs <node/pod-name>
+kubectl <pod-name> -c <container-name>
+kubectl exec -it <>
 
-#sudo journalctl -u kubelet | tail
-#sudo journalctl -u kubelet -xn | less
-#sudo kubectl get events | grep bad
-#kubectl get events | grep bad
-#kubectl describe node b
+sudo journalctl -u kubelet | tail
+sudo journalctl -u kubelet -xn | less
+sudo kubectl get events | grep bad
+kubectl get events | grep bad
+kubectl describe node master
 kubectl describe po --all-namespaces
 
 # ++++++++++++++++++++++++++
@@ -207,22 +213,41 @@ EOF
 
 kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
 
-kubectl proxy&
-kubectl create serviceaccount <bob>
-kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=default:bob;
-kubectl get secret
-kubectl describe secret bob-token-z6pnb
-ssh -L 9999:127.0.0.1:8001 -N -f -l vladimir master
+# Нужно редактировать файл конфиг kubectl и изменить тип сервиса на LoadBalancer
+kubectl -n kubernetes-dashboard edit svc kubernetes-dashboard
+# Вот так
+#   spec:
+#       type: LoadBalancer
+#       externalIPs:
+#       - 192.168.0.10
+
+# Рестарт может помочь
+kubectl -n kube-system rollout restart deployment/coredns
 
 
+#Следующая команда предоставит нам привязанный порт к сервису панели мониторинга.
+kubectl -n kube-system get services
+
+# следующая команду, чтобы получить токен.
+kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-system -o name | grep namespace) | grep token
+
+#!!! Получите доступ к панели мониторинга по адресу https://[master_node_ip]:[port] и предоставьте токен для входа. !!!
 
 # Открыть Dashboard UI по ссылке
 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-
 #Используйте файл $HOME/.kube/config для входа в UI.
 
 
+# Или на другой машине
+kubectl proxy&
+kubectl create serviceaccount <bob>
+kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=default:bob
+kubectl get secret
+kubectl describe secret bob-token-6pjnp
+ssh -L 9999:127.0.0.1:8001 -N -f -l vladimir master
+
 #----------
+# Если надо все заново
 
 При настройке кластера с помощью «kubeadm init» следует помнить несколько моментов, и это четко задокументировано на сайте Kubernetes kubeadm cluster create : 
 https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
