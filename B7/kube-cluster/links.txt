@@ -21,6 +21,8 @@ https://github.com/justmeandopensource/kubernetes/blob/master/docs/install-clust
 
 https://habr.com/ru/post/541118/
 
+https://eternalhost.net/blog/razrabotka/kubernetes-chto-eto
+
 =======
 
 https://github.com/kelseyhightower/kubernetes-the-hard-way
@@ -34,6 +36,22 @@ https://stackoverflow.com/questions/49112336/container-runtime-network-not-ready
 https://stackoverflow.com/questions/36880680/how-to-reset-my-kubectl-settings-back-to-default
 
 https://infoit.com.ua/linux/shpargalka-po-kubectl-dlya-administratorov-kubernetes-i-podgotovka-k-ekzamenu-cka-2/
+
+=======
+
+Как установить Kubernetes Dashboard
+
+https://www.youtube.com/watch?v=HpMel0AVu_Y
+
+https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
+https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+https://www.learnitguide.net/2020/10/install-kubernetes-dashboard-deploy.html
+
+https://itisgood.ru/2019/07/01/kak-poluchit-dostup-k-kubernetes-dashboard-izvne/
+
+https://otus.ru/nest/post/1250/
 
 
 

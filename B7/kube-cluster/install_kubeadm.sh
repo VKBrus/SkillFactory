@@ -10,6 +10,7 @@ sudo swapoff -a
 # Необходимо закомментировать строку со "swapfile"
 sudo nano /etc/fstab
 
+sudo nano /etc/hosts
 sudo hostnamectl set-hostname master  
 #sudo hostnamectl set-hostname worker1
 #sudo hostnamectl set-hostname worker2
@@ -35,7 +36,7 @@ sudo sysctl --system
 #--- Установка Docker
 sudo apt-get update
 
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common acl
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
@@ -93,50 +94,52 @@ sudo apt-get install -y kubelet kubeadm kubectl
 
 sudo apt-mark hold kubelet kubeadm kubectl
 
-#На master
-sudo kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=172.17.0.1 
 
-# 172.17.0.1 - откуда взялся? он показывается по команде ifconfig...
-## --- или 130.193.58.32 (внешний) или 10.244.0.3 (внутренний) ???
+#--- Натсройка кластера
+
+#На master
+#sudo kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=172.17.0.1 
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 > cluster_initialized.txt --ignore-preflight-errors=...
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 #Alternatively, if you are the root user, you can run:
-export KUBECONFIG=/etc/kubernetes/admin.conf
+#export KUBECONFIG=/etc/kubernetes/admin.conf
+
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
 
 #You should now deploy a pod network to the cluster.
 #Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 #  https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
 # --- только на master
-sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+#sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
+sudo kubeadm token list
+sudo kubeadm token create --print-join-command
 
 #Then you can join any number of worker nodes by running the following on each as root:
 # --- На worker
-sudo kubeadm join 172.17.0.1:6443 --token 6mid0v.br7zdb08jrvjzkmc --discovery-token-ca-cert-hash sha256:f270599d60449d08a0ba3701906a0e0b4af88cbc91dca6405369e37587166c52 
-
-# 172.17.0.1 - откуда взялся? он показывается по команде ifconfig...
-## --- или 130.193.58.32 (внешний) или 10.244.0.3 (внутренний) ???
-===
+#sudo kubeadm join 172.17.0.1:6443 --token 6mid0v.br7zdb08jrvjzkmc --discovery-token-ca-cert-hash sha256:f270599d60449d08a0ba3701906a0e0b4af88cbc91dca6405369e37587166c
+sudo kubeadm join 10.244.0.3:6443 --token uhk38r.yjf68xhje9ky101z --discovery-token-ca-cert-hash sha256:459c25819a4cd0d95f6c069f094978baf5cf5e780880ad3f2ee8824793120606
+=======
 
 #Если же пробовать Flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
+#kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
 # ???
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+#kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 # --------  Если выбираете плагин Calico
-curl https://docs.projectcalico.org/manifests/calico.yaml -O
-kubectl apply -f calico.yaml
+#curl https://docs.projectcalico.org/manifests/calico.yaml -O
+#kubectl apply -f calico.yaml
 
 # ---------
 
-
+sudo systemctl status kubelet
 sudo systemctl start kubelet
 sudo systemctl enable kubelet 
-
 
 # ---
 
@@ -146,8 +149,8 @@ export KUBERNETES_MASTER=https://10.244.0.10:6443   #Надо ли вообще?
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
 
-
 #Проверка
+sudo chmod 755 -R ~/.kube/cache
 kubectl get all -o wide
 
 kubectl get nodes -o wide
@@ -169,6 +172,55 @@ kubectl get events -A
 #kubectl get events | grep bad
 #kubectl describe node b
 kubectl describe po --all-namespaces
+
+# ++++++++++++++++++++++++++
+#Как установить Kubernetes Dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+
+#Создать dashboard-adminuser.yaml
+touch dashboard-adminuser.yaml
+kubectl apply -f dashboard-adminuser.yaml
+
+#ИЛИ
+cat <<EOF | kubectl apply -f - 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+cat <<EOF | kubectl apply -f - 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+
+kubectl proxy&
+kubectl create serviceaccount <bob>
+kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=default:bob;
+kubectl get secret
+kubectl describe secret bob-token-z6pnb
+ssh -L 9999:127.0.0.1:8001 -N -f -l vladimir master
+
+
+
+# Открыть Dashboard UI по ссылке
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+#Используйте файл $HOME/.kube/config для входа в UI.
+
 
 #----------
 
@@ -234,6 +286,7 @@ kubelet, kubeadm, kubectl - опять же были вами уже устан�
 А далее просто пару команд:
 kubeadm init --pod-network-cidr=10.244.0.0/16 > cluster_initialized.txt под рутом
 копируете конфиг из /etc/kubernetes/admin.conf в /home/vladimir/.kube/config
+
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
 kubeadm token create --print-join-command     -  под рутом
 на нодах выполняете join - команду из п.4
