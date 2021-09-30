@@ -228,8 +228,12 @@ kubectl -n kube-system rollout restart deployment/coredns
 #Следующая команда предоставит нам привязанный порт к сервису панели мониторинга.
 kubectl -n kube-system get services
 
-# следующая команду, чтобы получить токен.
+# следующая команда, чтобы получить токен.
 kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-system -o name | grep namespace) | grep token
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6IktVSVptVTh4dnBJZ0ItVHlWZmZaVjFQQkpmdUtQLWs5d1M2WkJhak5nRncifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJuYW1lc3BhY2UtY29udHJvbGxlci10b2tlbi1uNzlsZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJuYW1lc3BhY2UtY29udHJvbGxlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImUyMDY4MWQzLWIxOTQtNGY4Ny04YzY5LWVmMjU3NjU3ZDYyYiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTpuYW1lc3BhY2UtY29udHJvbGxlciJ9.kakGboRc2kLPd-fBTDcXIkQeVCZBEYn3hfPeHRWeCHwDtBDdUkCmqgLrE0JEJsNvaxjv-YvGadcKIcvbyFwnn8b0jCYFjbFLRhlyAKHq8GIQbt97G4FTVaH1W9YOHcHbgHpdJJpvodqIb9gQES7bkrbGaOkW2vPDAih7GAFW0LMnzL3O_95CZuyLSHGoudi9LVNqw-jIbvWmfeulRa4xHZcz3bbKwoeOvIYejVydzSBjLRR0ZYRmWx1TzCq3jF4alZIj3TmGw6Sr0mgNhiPu5hCOzv4uqcSuFuAQJaISRHinVoEhlr5R5RPc1UZeh1YX-6rSyflnaNIqm9AcLFaWKA
+
+
 
 #!!! Получите доступ к панели мониторинга по адресу https://[master_node_ip]:[port] и предоставьте токен для входа. !!!
 
@@ -245,6 +249,18 @@ kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --
 kubectl get secret
 kubectl describe secret bob-token-6pjnp
 ssh -L 9999:127.0.0.1:8001 -N -f -l vladimir master
+
+#  ---------- Советы разных людей
+# Подсеть поднимал Calico
+# я стартовал кластер вот так:
+kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint=10.129.0.4
+
+
+# !!!!!!!!!!! Нужно проброс порта делать:
+kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8443:443 --address 0.0.0.0
+# после этого подключаться к дашборду по https://178.154.215.115 (внешний адрес):8443
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 #----------
 # Если надо все заново

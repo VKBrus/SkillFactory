@@ -9,7 +9,7 @@
 
     - name: Create .kube directory
       become: yes
-      become_user: alex
+      become_user: bob
       file:
         path: $HOME/.kube
         state: directory
@@ -18,13 +18,13 @@
     - name: Copy admin.conf to user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/alex/.kube/config
+        dest: /home/bob/.kube/config
         remote_src: yes
-        owner: alex
+        owner: bob
 
     - name: Install Pod network
       become: yes
-      become_user: alex
+      become_user: bob
       shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > pod_network_setup.txt
       args:
         chdir: $HOME
