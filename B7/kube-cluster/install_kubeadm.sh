@@ -179,8 +179,20 @@ kubectl get events | grep bad
 kubectl describe node master
 kubectl describe po --all-namespaces
 
+# Проверка здоровья
+kubectl get componentstatuses
+
+
+# Посмотреть и сохранить манифесты в файл
+kubectl -n kube-system get configmap kubeadm-config -o yaml > kubeadm-config.yaml
+kubectl get nodes -o yaml > nodes-config.yaml
+
+
 # ++++++++++++++++++++++++++
 #Как установить Kubernetes Dashboard
+#Kubernetes Dashboard — это универсальный веб-интерфейс для кластеров Kubernetes. 
+#Он позволяет пользователям управлять приложениями, работающими в кластере, и устранять их неполадки, а также управлять самим кластером.
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 
 #Создать dashboard-adminuser.yaml
@@ -233,33 +245,49 @@ kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-syst
 
 eyJhbGciOiJSUzI1NiIsImtpZCI6IktVSVptVTh4dnBJZ0ItVHlWZmZaVjFQQkpmdUtQLWs5d1M2WkJhak5nRncifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJuYW1lc3BhY2UtY29udHJvbGxlci10b2tlbi1uNzlsZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJuYW1lc3BhY2UtY29udHJvbGxlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImUyMDY4MWQzLWIxOTQtNGY4Ny04YzY5LWVmMjU3NjU3ZDYyYiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTpuYW1lc3BhY2UtY29udHJvbGxlciJ9.kakGboRc2kLPd-fBTDcXIkQeVCZBEYn3hfPeHRWeCHwDtBDdUkCmqgLrE0JEJsNvaxjv-YvGadcKIcvbyFwnn8b0jCYFjbFLRhlyAKHq8GIQbt97G4FTVaH1W9YOHcHbgHpdJJpvodqIb9gQES7bkrbGaOkW2vPDAih7GAFW0LMnzL3O_95CZuyLSHGoudi9LVNqw-jIbvWmfeulRa4xHZcz3bbKwoeOvIYejVydzSBjLRR0ZYRmWx1TzCq3jF4alZIj3TmGw6Sr0mgNhiPu5hCOzv4uqcSuFuAQJaISRHinVoEhlr5R5RPc1UZeh1YX-6rSyflnaNIqm9AcLFaWKA
 
+# !!!!!!!!!!! Нужно проброс порта делать:
+kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8443:443 --address 0.0.0.0
+# после этого подключаться к дашборду по https://178.154.215.115 (внешний адрес):8443
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 #!!! Получите доступ к панели мониторинга по адресу https://[master_node_ip]:[port] и предоставьте токен для входа. !!!
 
+
+# Из задания (немного некорректная формулировка)
 # Открыть Dashboard UI по ссылке
 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 #Используйте файл $HOME/.kube/config для входа в UI.
 
 
-# Или на другой машине
+# Или на другой машине - с пробросом портов
 kubectl proxy&
 kubectl create serviceaccount <bob>
-kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=default:bob
+kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=default:<bob>
 kubectl get secret
 kubectl describe secret bob-token-6pjnp
-ssh -L 9999:127.0.0.1:8001 -N -f -l vladimir master
+ssh -L 9999:127.0.0.1:8001 -N -f -l <bob> master
 
-#  ---------- Советы разных людей
+
+# Или - другой путь к Dashboard
+# запускать от пользователя
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm install --namespace monitoring --create-namespace -f manifests/dashboard-values.yml kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard
+kubectl apply -f manifests/dashboard-admin.yml
+kubectl -n monitoring describe secret $(kubectl -n monitoring get secret | grep admin-user | awk '{print $1}')
+kubectl port-forward -n monitoring $(kubectl get pods -n monitoring -l "app.kubernetes.io/name=kubernetes-dashboard" -o jsonpath="{.items[0].metadata.name}") 9090
+# Перейдите по адресу http://localhost:9090 и используйте представленный токен для авторизации
+
+#
+#
+#
+#
+#
+
+#  ---------- Советы разных людей --- разные способы решения разных этапов
 # Подсеть поднимал Calico
 # я стартовал кластер вот так:
 kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint=10.129.0.4
-
-
-# !!!!!!!!!!! Нужно проброс порта делать:
-kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8443:443 --address 0.0.0.0
-# после этого подключаться к дашборду по https://178.154.215.115 (внешний адрес):8443
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 #----------
