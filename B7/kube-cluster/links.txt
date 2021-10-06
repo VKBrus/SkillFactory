@@ -54,4 +54,6 @@ https://itisgood.ru/2019/07/01/kak-poluchit-dostup-k-kubernetes-dashboard-izvne/
 https://otus.ru/nest/post/1250/
 
 
+https://kubernetes.io/ru/docs/reference/kubectl/cheatsheet/
+
 
