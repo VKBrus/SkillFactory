@@ -1,0 +1,11 @@
+https://www.jfrog.com/confluence/display/RTF6X/Installing+Artifactory
+
+https://www.jfrog.com/confluence/display/RTF6X/Installing+with+Docker
+
+https://www.jfrog.com/confluence/display/RTF6X/Installing+Artifactory#InstallingArtifactory-InstallingArtifactory
+
+https://www.jfrog.com/confluence/display/RTF6X/Installing+on+Linux+Solaris+or+Mac+OS
+
+https://docs.docker.com/compose/
+https://github.com/JFrog/artifactory-docker-examples
+
