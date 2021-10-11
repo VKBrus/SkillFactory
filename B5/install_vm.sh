@@ -71,3 +71,9 @@ docker pull docker.bintray.io/jfrog/artifactory-oss:latest
 docker images
 docker run --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactory-oss:latest
 
+# ---  на другой машине
+docker run --name artifactory-pro-nginx -d -p 8000:80 -p 8443:443 docker.bintray.io/jfrog/nginx-artifactory-oss:latest
+
+# --- Adding Self Signed Certificates to Java cacerts
+docker run --name artifactory -d -p 8081:8081 -v /home/bob/cert_test docker.bintray.io/jfrog/artifactory-oss:latest
+

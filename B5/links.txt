@@ -1,3 +1,6 @@
+# пароль к ВМ win = vkbrus-win2021
+
+
 https://www.jfrog.com/confluence/display/RTF6X/Installing+Artifactory
 
 https://www.jfrog.com/confluence/display/RTF6X/Installing+with+Docker
