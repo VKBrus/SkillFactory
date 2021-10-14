@@ -1,5 +1,5 @@
-sudo apt update
-sudo apt upgrade
+sudo apt update;
+sudo apt upgrade;
 sudo apt install  -y mc net-tools nano
 
 sudo locale-gen ru_RU.UTF-8
@@ -11,7 +11,7 @@ sudo swapoff -a
 sudo nano /etc/fstab
 
 sudo nano /etc/hosts
-sudo hostnamectl set-hostname master  
+sudo hostnamectl set-hostname master
 #sudo hostnamectl set-hostname worker1
 #sudo hostnamectl set-hostname worker2
 
@@ -75,5 +75,15 @@ docker run --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactor
 docker run --name artifactory-pro-nginx -d -p 8000:80 -p 8443:443 docker.bintray.io/jfrog/nginx-artifactory-oss:latest
 
 # --- Adding Self Signed Certificates to Java cacerts
-docker run --name artifactory -d -p 8081:8081 -v /home/bob/cert_test docker.bintray.io/jfrog/artifactory-oss:latest
+
+
+
+# --- Для установки certbot
+
+sudo apt install snapd
+sudo snap install core; sudo snap refresh core
+sudo apt-get remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
 
