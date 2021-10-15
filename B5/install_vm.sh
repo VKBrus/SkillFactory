@@ -75,8 +75,11 @@ docker run --name artifactory -d -p 8081:8081 docker.bintray.io/jfrog/artifactor
 docker run --name artifactory-pro-nginx -d -p 8000:80 -p 8443:443 docker.bintray.io/jfrog/nginx-artifactory-oss:latest
 
 # --- Adding Self Signed Certificates to Java cacerts
+docker run --name artifactory -d -p 8081:8081 -v /home/bob/cert_test docker.bintray.io/jfrog/artifactory-oss:latest
 
-
+# --- проверка, что за web-сервер слушает порты
+ss -nlpt
+netstat -nlpt
 
 # --- Для установки certbot
 
@@ -85,5 +88,12 @@ sudo snap install core; sudo snap refresh core
 sudo apt-get remove certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
+sudo -s 
+cd /opt/jfrog/artifactory/var/etc/security/keys/trusted
+openssl s_client -connect my.artifactory.com:443 -showcerts &>/dev/null/ > my.artifactory.com.crt
+
+
+# --- скопировать сво ключи в этот каталог, перезапустить artifactory
 
 
