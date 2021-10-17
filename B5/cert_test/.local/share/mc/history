@@ -1,0 +1,18 @@
+[mc.shared.search]
+0=server
+
+[save-as]
+0=/etc/nginx/nginx.conf
+
+[cmdline]
+0=
+
+[Dir Hist New Right Panel]
+0=/home/bob
+
+[Dir Hist New Left Panel]
+0=/home/bob
+1=/home
+2=/
+3=/etc
+4=/etc/nginx
