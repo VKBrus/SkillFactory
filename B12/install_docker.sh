@@ -39,6 +39,12 @@ sudo sysctl --system
 #sudo useradd vladimir -p vladimir_sf
 
 #--- Установка Docker
+sudo apt install docker.io
+sudo apt install docker-compose
+
+------
+# ИЛИ 
+
 sudo apt-get update
 
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common acl
@@ -85,9 +91,3 @@ sudo systemctl restart docker
 sudo systemctl status docker
 sudo systemctl enable docker
 
-
-------
-# ИЛИ 
-
-sudo apt install docker.io
-sudo apt install docker-compose

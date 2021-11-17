@@ -1,2 +1,15 @@
+https://github.com/prometheus
+https://github.com/prometheus/prometheus.git
+https://github.com/prometheus/node_exporter.git
+https://github.com/prometheus/alertmanager.git
+
 https://github.com/prometheus/node_exporter
 https://github.com/prometheus-community/windows_exporter
+https://github.com/prometheus-junkyard/prometheus_cli.git
+
+https://github.com/digitalstudium/grafana-docker-stack
+
+https://grafana.com/grafana/dashboards/1860
+
+http://130.193.59.248:3000/d/c9LAww5nz/node-exporter-full?orgId=1&refresh=1m&from=now-15m&to=now
+
