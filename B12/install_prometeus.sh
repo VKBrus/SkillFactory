@@ -32,6 +32,7 @@ nano docker-compose.yml
 #         ports:
 #             - 10.244.0.23:9100:9100
 #         restart: always
+#
 #     blackbox-exporter:
 #           image: prom/blackbox-exporter
 #           ports:
@@ -94,14 +95,14 @@ sudo docker-compose up -d
 curl 10.244.0.23:9100/metrics
 
 
-# --- Установка Graphana
+# --- Установка Grafana
 git clone https://github.com/digitalstudium/grafana-docker-stack.git
 sudo docker swarm init
-# Swarm initialized: current node (j5dednod6epcd2c9tne3b1y47) is now a manager.
+# Swarm initialized: current node (q987iu4hkbtwljpoyfndya3bn) is now a manager.
 #
 # To add a worker to this swarm, run the following command:
 #
-#     docker swarm join --token SWMTKN-1-0po8qczdhmrseaevwhcnzpvfb10q0v3hyqbqi7i39hckkf7g55-9xyqn1y7slno6w1r6s5a410mt 10.244.0.23:2377
+#     docker swarm join --token SWMTKN-1-4aubzug2or8v8q8bjrg1zfwnecsmvnqb9jai7eey9fmi6hlc2d-6ws81bmn8pbg3xwucgjqy919a 10.244.0.23:2377
 # 
 # To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 
@@ -154,9 +155,9 @@ sudo docker ps
 #c4357357e0c1   prom/blackbox-exporter         "/bin/blackbox_expor…"   15 minutes ago   Up 15 minutes   10.244.0.23:9115->9115/tcp   b12_blackbox-exporter_1
 #16647c4f886e   prom/node-exporter             "/bin/node_exporter …"   15 minutes ago   Up 15 minutes   10.244.0.23:9100->9100/tcp   b12_node-exporter_1
 
-nano /var/lib/docker/volumes/monitoring_prom-configs/_data/prometheus.yml
+sudo nano /var/lib/docker/volumes/monitoring_prom-configs/_data/prometheus.yml
 
 sudo docker ps | grep prometheus
 sudo docker kill -s SIGHUP c3ac3d9c4983
-
-
+#ИЛИ
+sudo docker ps | grep prometheus | awk '{print $1}' | xargs sudo docker kill -s SIGHUP

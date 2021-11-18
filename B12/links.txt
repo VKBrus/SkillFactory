@@ -13,3 +13,4 @@ https://grafana.com/grafana/dashboards/1860
 
 http://130.193.59.248:3000/d/c9LAww5nz/node-exporter-full?orgId=1&refresh=1m&from=now-15m&to=now
 
+scp -r bob@130.193.59.248:/home/bob/B12 /Users/bob/SkillFactory/B12/
