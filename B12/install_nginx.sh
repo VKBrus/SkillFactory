@@ -35,3 +35,15 @@ sudo nano index.html
 
 sudo docker-compose up -d
 
+### -- На VM2
+git clone https://github.com/digitalstudium/grafana-docker-stack.git
+sudo docker swarm init
+#Swarm initialized: current node (xkulzblof7wv870vnn8xg99k7) is now a manager.
+#
+#To add a worker to this swarm, run the following command:
+#
+#    docker swarm join --token SWMTKN-1-2ie9fza1a8srezbx9juslopghvvtgl9fl2cj7fl61qutpvbv4t-1tz05lg8pqtogtav7sfh9v71o 10.244.0.21:2377
+#
+#To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+sudo docker stack deploy -c grafana-docker-stack/node-exporter.yml node-exporter
