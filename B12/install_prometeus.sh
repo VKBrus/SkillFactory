@@ -31,6 +31,7 @@ nano docker-compose.yml
 #             - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
 #         ports:
 #             - 10.244.0.23:9100:9100
+#			  - 10.244.0.21:9100:9100
 #         restart: always
 #
 #     blackbox-exporter:
@@ -98,62 +99,67 @@ curl 10.244.0.23:9100/metrics
 # --- Установка Grafana
 git clone https://github.com/digitalstudium/grafana-docker-stack.git
 sudo docker swarm init
-# Swarm initialized: current node (q987iu4hkbtwljpoyfndya3bn) is now a manager.
+# Swarm initialized: current node (qzii2wmmfifkbpbgxnhqol7hl) is now a manager.
 #
 # To add a worker to this swarm, run the following command:
 #
-#     docker swarm join --token SWMTKN-1-4aubzug2or8v8q8bjrg1zfwnecsmvnqb9jai7eey9fmi6hlc2d-6ws81bmn8pbg3xwucgjqy919a 10.244.0.23:2377
+#     docker swarm join --token SWMTKN-1-0r5tqq3s4m5u8g08ji3f4rwgllmak9u0djyvosguiafdy83ir1-3yyibq9el9kc0mewer6bsfroo 10.244.0.23:2377
 # 
 # To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+# Для 
+# sudo docker swarm join-token manager
+
 
 sudo docker stack deploy -c grafana-docker-stack/docker-compose.yml monitoring
 
 sudo docker stats
-#CONTAINER ID   NAME                                                   CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O    PIDS
-#de845d53324b   b12_prometheus_1                                       0.00%     0B / 0B               0.00%     0B / 0B           0B / 0B      0
-#c4357357e0c1   b12_blackbox-exporter_1                                0.00%     2.812MiB / 7.775GiB   0.04%     1.17kB / 0B       0B / 0B      6
-#16647c4f886e   b12_node-exporter_1                                    0.00%     6.219MiB / 7.775GiB   0.08%     2.69kB / 62.7kB   0B / 0B      8
-#c6b2b3d308df   monitoring_node-exporter.1.o89jgxoa6jqoiubyxzu8w9f0y   0.00%     3.227MiB / 7.775GiB   0.04%     516B / 0B         0B / 0B      6
-#c3ac3d9c4983   monitoring_prometheus.1.w2mvvqhqcr4y0xwo7wca4smbl      0.00%     24.4MiB / 7.775GiB    0.31%     176B / 0B         0B / 4.1kB   9                                     0.00%     27.59MiB / 7.775GiB   0.35%     2.57MB / 130kB    0B / 0B       9
-# sudo docker container port 442bda30965c
-# 9090/tcp -> 127.0.0.1:9090
-# sudo docker container port 2251e63a2b62
-# 9100/tcp -> 127.0.0.1:9100
+#CONTAINER ID   NAME                                                   CPU %     MEM USAGE / LIMIT     MEM %     NET I/O          BLOCK I/O    PIDS
+#9b06409252f1   monitoring_grafana.1.329g7f64ybgqvmunykou0oow5         0.11%     24.57MiB / 7.775GiB   0.31%     68.1kB / 718kB   0B / 123kB   11
+#6013f530a9f5   monitoring_node-exporter.1.7vxawmh0kw5l5wfpglkjsvxm2   0.00%     3.305MiB / 7.775GiB   0.04%     1.06kB / 0B      0B / 0B      6
+#7ac3cbf795e1   b12_prometheus_1                                       0.00%     27.03MiB / 7.775GiB   0.34%     5.12MB / 530kB   0B / 0B      10
+#3754205005e8   b12_blackbox-exporter_1                                0.00%     10.14MiB / 7.775GiB   0.13%     1.98MB / 180kB   0B / 0B      10
+#ebc52fba0459   b12_node-exporter_1                                    0.00%     10.15MiB / 7.775GiB   0.13%     247kB / 5.51MB   0B / 0B      7                           0.00%     27.59MiB / 7.775GiB   0.35%     2.57MB / 130kB    0B / 0B       9
+# sudo docker container port 7ac3cbf795e1
+#9090/tcp -> 10.244.0.23:9090
+# sudo docker container port 3754205005e8
+#9115/tcp -> 10.244.0.23:9115
+#sudo docker container port ebc52fba0459
+#9100/tcp -> 10.244.0.23:9100
 
 netstat -ntlp
 #Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
 #tcp        0      0 10.244.0.23:9100        0.0.0.0:*               LISTEN      -                   
-#tcp        0      0 127.0.0.1:45231         0.0.0.0:*               LISTEN      -                   
+#tcp        0      0 127.0.0.1:45265         0.0.0.0:*               LISTEN      -                   
 #tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -                   
 #tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
 #tcp        0      0 10.244.0.23:9115        0.0.0.0:*               LISTEN      -                   
-#tcp6       0      0 :::9090                 :::*                    LISTEN      -                   
-#tcp6       0      0 :::2377                 :::*                    LISTEN      -                   
-#tcp6       0      0 :::7946                 :::*                    LISTEN      -                   
+#tcp        0      0 10.244.0.23:9090        0.0.0.0:*               LISTEN      -                   
 #tcp6       0      0 :::22                   :::*                    LISTEN      -                   
-#tcp6       0      0 :::3000                 :::*                    LISTEN      -        
+#tcp6       0      0 :::3000                 :::*                    LISTEN      -                   
+#tcp6       0      0 :::2377                 :::*                    LISTEN      -                   
+#tcp6       0      0 :::7946                 :::*                    LISTEN      -
 
 sudo docker-compose ps
-#       Name                      Command               State            Ports          
-#---------------------------------------------------------------------------------------
-#b12_blackbox-exporter_1   /bin/blackbox_exporter --c ...   Up       10.244.0.23:9115->9115/tcp
-#b12_node-exporter_1       /bin/node_exporter --path. ...   Up       10.244.0.23:9100->9100/tcp
-#b12_prometheus_1          /bin/prometheus --config.f ...   Exit 2
+#                Name                        Command               State             Ports           
+#---------------------------------------------------------------------------------------------
+#b12_blackbox-exporter_1   /bin/blackbox_exporter --c ...   Up      10.244.0.23:9115->9115/tcp
+#b12_node-exporter_1       /bin/node_exporter --path. ...   Up      10.244.0.23:9100->9100/tcp
+#b12_prometheus_1          /bin/prometheus --config.f ...   Up      10.244.0.23:9090->9090/tcp
 
 sudo docker-compose images
-#     Container            Repository        Tag       Image Id       Size  
-#---------------------------------------------------------------------------
+#     Container                Repository          Tag       Image Id       Size  
+#-----------------------------------------------------------------------------------
 #b12_blackbox-exporter_1   prom/blackbox-exporter   latest   c9e462ce1ee4   20.89 MB
-#b12_node-exporter_1       prom/node-exporter       latest   0fafea149859   21.17 MB
+#b12_node-exporter_1       prom/node-exporter       latest   95ff6611a45b   20.9 MB 
 #b12_prometheus_1          prom/prometheus          latest   c10e9cbf22cd   194.1 MB
 
 sudo docker ps
 #CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS          PORTS                        NAMES
-#7bc5d275b667   grafana/grafana:8.0.6-ubuntu   "/run.sh"                12 minutes ago   Up 12 minutes   3000/tcp                     monitoring_grafana.1.n5bkioecxymqr86rn10z1ssd2
-#c3ac3d9c4983   prom/prometheus:v2.28.1        "/bin/prometheus --c…"   12 minutes ago   Up 12 minutes   9090/tcp                     monitoring_prometheus.1.w2mvvqhqcr4y0xwo7wca4smbl
-#c6b2b3d308df   prom/node-exporter:v1.2.0      "/bin/node_exporter …"   12 minutes ago   Up 12 minutes   9100/tcp                     monitoring_node-exporter.1.o89jgxoa6jqoiubyxzu8w9f0y
-#c4357357e0c1   prom/blackbox-exporter         "/bin/blackbox_expor…"   15 minutes ago   Up 15 minutes   10.244.0.23:9115->9115/tcp   b12_blackbox-exporter_1
-#16647c4f886e   prom/node-exporter             "/bin/node_exporter …"   15 minutes ago   Up 15 minutes   10.244.0.23:9100->9100/tcp   b12_node-exporter_1
+#9b06409252f1   grafana/grafana:8.0.6-ubuntu   "/run.sh"                10 minutes ago   Up 10 minutes   3000/tcp                     monitoring_grafana.1.329g7f64ybgqvmunykou0oow5
+#6013f530a9f5   prom/node-exporter:v1.2.0      "/bin/node_exporter …"   10 minutes ago   Up 10 minutes   9100/tcp                     monitoring_node-exporter.1.7vxawmh0kw5l5wfpglkjsvxm2
+#7ac3cbf795e1   prom/prometheus:latest         "/bin/prometheus --c…"   43 minutes ago   Up 43 minutes   10.244.0.23:9090->9090/tcp   b12_prometheus_1
+#3754205005e8   prom/blackbox-exporter         "/bin/blackbox_expor…"   43 minutes ago   Up 43 minutes   10.244.0.23:9115->9115/tcp   b12_blackbox-exporter_1
+#ebc52fba0459   prom/node-exporter             "/bin/node_exporter …"   43 minutes ago   Up 43 minutes   10.244.0.23:9100->9100/tcp   b12_node-exporter_1
 
 sudo nano /var/lib/docker/volumes/monitoring_prom-configs/_data/prometheus.yml
 
