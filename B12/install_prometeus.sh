@@ -109,7 +109,6 @@ sudo docker swarm init
 # Для 
 # sudo docker swarm join-token manager
 
-
 sudo docker stack deploy -c grafana-docker-stack/docker-compose.yml monitoring
 
 sudo docker stats
@@ -167,3 +166,7 @@ sudo docker ps | grep prometheus
 sudo docker kill -s SIGHUP c3ac3d9c4983
 #ИЛИ
 sudo docker ps | grep prometheus | awk '{print $1}' | xargs sudo docker kill -s SIGHUP
+
+
+
+sudo docker run -d --name=grafana -p 3000:3000 grafana/grafana-enterprise:8.2.5-ubuntu
